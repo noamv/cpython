@@ -105,6 +105,8 @@ typedef struct _object {
     _PyObject_HEAD_EXTRA
     Py_ssize_t ob_refcnt;
     struct _typeobject *ob_type;
+	_Py_atomic_int ob_owner;
+	char ob_in_use; // ungil: chage type
 } PyObject;
 
 /* Cast argument to PyObject* type. */
@@ -120,7 +122,9 @@ typedef struct {
 
 #define Py_REFCNT(ob)           (_PyObject_CAST(ob)->ob_refcnt)
 #define Py_TYPE(ob)             (_PyObject_CAST(ob)->ob_type)
+#define Py_OWNER(ob)             (_PyObject_CAST(ob)->ob_owner)
 #define Py_SIZE(ob)             (_PyVarObject_CAST(ob)->ob_size)
+
 
 /*
 Type objects contain a string containing the type name (to help somewhat

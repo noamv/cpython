@@ -111,6 +111,7 @@ converting the dict to the combined table.
 #define PyDict_MINSIZE 8
 
 #include "Python.h"
+#include "pycore_atomic.h"
 #include "pycore_object.h"
 #include "pycore_pystate.h"
 #include "dict-common.h"
@@ -1517,6 +1518,7 @@ _PyDict_LoadGlobal(PyDictObject *globals, PyDictObject *builtins, PyObject *key)
 int
 PyDict_SetItem(PyObject *op, PyObject *key, PyObject *value)
 {
+	int ret = -1;
     PyDictObject *mp;
     Py_hash_t hash;
     if (!PyDict_Check(op)) {
@@ -1525,20 +1527,45 @@ PyDict_SetItem(PyObject *op, PyObject *key, PyObject *value)
     }
     assert(key);
     assert(value);
+	
+	if (Py_OWNER(op) != _PyThreadID_GET()) {
+		_Py_atomic_store_relaxed(Py_OWNER(op), 0);
+
+	}
+	else {
+		op->ob_in_use = 1;
+	}
+
     mp = (PyDictObject *)op;
     if (!PyUnicode_CheckExact(key) ||
         (hash = ((PyASCIIObject *) key)->hash) == -1)
     {
         hash = PyObject_Hash(key);
-        if (hash == -1)
-            return -1;
+		if (hash == -1) {
+			ret = -1;
+			goto exit;
+		}
     }
+	if (Py_OWNER(op) == 0) {
+		// lock the lock
+	}
+	
+	if (mp->ma_keys == Py_EMPTY_KEYS) {
+		ret = insert_to_emptydict(mp, key, hash, value);
+		goto exit;
+	}
+	/* insertdict() handles any resizing that might be necessary */
+	ret = insertdict(mp, key, hash, value);
 
-    if (mp->ma_keys == Py_EMPTY_KEYS) {
-        return insert_to_emptydict(mp, key, hash, value);
-    }
-    /* insertdict() handles any resizing that might be necessary */
-    return insertdict(mp, key, hash, value);
+exit: // ungil: make sure code style is correct
+	if (op->ob_in_use == 0) {
+		// unlock the lock
+	}
+	else {
+		op->ob_in_use = 0;
+	}
+	return ret;
+
 }
 
 int

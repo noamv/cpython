@@ -210,6 +210,7 @@ pymain_header(const PyConfig *config)
     if (config->site_import) {
         fprintf(stderr, "%s\n", COPYRIGHT);
     }
+	fprintf(stderr, "Welcome to ungil python\n");
 }
 
 

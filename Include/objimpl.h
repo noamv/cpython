@@ -142,6 +142,7 @@ _PyObject_INIT(PyObject *op, PyTypeObject *typeobj)
         Py_INCREF(typeobj);
     }
     _Py_NewReference(op);
+	Py_OWNER(op) = 4; //Get from tls
     return op;
 }
 
