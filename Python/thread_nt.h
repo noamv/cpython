@@ -9,6 +9,8 @@
 #include <process.h>
 #endif
 
+#include "ungil.h"
+
 /* options */
 #ifndef _PY_USE_CV_LOCKS
 #define _PY_USE_CV_LOCKS 1     /* use locks based on cond vars */
@@ -147,6 +149,7 @@ unsigned long PyThread_get_thread_ident(void);
 unsigned long PyThread_get_thread_native_id(void);
 #endif
 
+
 /*
  * Initialization of the C package, should not be needed.
  */
@@ -164,11 +167,13 @@ typedef struct {
     void *arg;
 } callobj;
 
+
 /* thunker to call adapt between the function type used by the system's
 thread start function and the internally used one. */
 static unsigned __stdcall
 bootstrap(void *call)
 {
+	tls_thread_id = InterlockedIncrement(&GlOBAL_THREAD_COUNTER);
     callobj *obj = (callobj*)call;
     void (*func)(void*) = obj->func;
     void *arg = obj->arg;

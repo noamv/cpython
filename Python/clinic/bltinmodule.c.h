@@ -8,8 +8,17 @@ PyDoc_STRVAR(builtin_abs__doc__,
 "\n"
 "Return the absolute value of the argument.");
 
+PyDoc_STRVAR(builtin_get_owner__doc__,
+	"get_owner($module, x)\n"
+	"--\n"
+	"\n"
+	"Return the owner of the object, if object is shared the owner is 0.");
+
 #define BUILTIN_ABS_METHODDEF    \
     {"abs", (PyCFunction)builtin_abs, METH_O, builtin_abs__doc__},
+
+#define BUILTIN_GET_OWNER_METHODDEF \
+	{"get_owner", (PyCFunction)builtin_get_owner, METH_O, builtin_get_owner__doc__},
 
 PyDoc_STRVAR(builtin_all__doc__,
 "all($module, iterable, /)\n"

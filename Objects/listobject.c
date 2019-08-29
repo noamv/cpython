@@ -168,7 +168,7 @@ PyList_New(Py_ssize_t size)
         PyErr_BadInternalCall();
         return NULL;
     }
-    if (numfree) {
+    if (1==2) {
         numfree--;
         op = free_list[numfree];
         _Py_NewReference((PyObject *)op);

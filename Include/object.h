@@ -105,7 +105,8 @@ typedef struct _object {
     _PyObject_HEAD_EXTRA
     Py_ssize_t ob_refcnt;
     struct _typeobject *ob_type;
-	_Py_atomic_int ob_owner;
+	// _Py_atomic_int ob_owner; ungill: the include of pycore_atomic for _Py_atomic_int breaks include order
+	unsigned int ob_owner;
 	char ob_in_use; // ungil: chage type
 } PyObject;
 

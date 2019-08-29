@@ -1528,13 +1528,14 @@ PyDict_SetItem(PyObject *op, PyObject *key, PyObject *value)
     assert(key);
     assert(value);
 	
+	/*
 	if (Py_OWNER(op) != _PyThreadID_GET()) {
 		_Py_atomic_store_relaxed(Py_OWNER(op), 0);
 
 	}
 	else {
 		op->ob_in_use = 1;
-	}
+	}*/
 
     mp = (PyDictObject *)op;
     if (!PyUnicode_CheckExact(key) ||
@@ -1546,9 +1547,10 @@ PyDict_SetItem(PyObject *op, PyObject *key, PyObject *value)
 			goto exit;
 		}
     }
-	if (Py_OWNER(op) == 0) {
+	
+	/*if (Py_OWNER(op) == 0) {
 		// lock the lock
-	}
+	}*/
 	
 	if (mp->ma_keys == Py_EMPTY_KEYS) {
 		ret = insert_to_emptydict(mp, key, hash, value);

@@ -6,6 +6,7 @@
 #define Py_OBJIMPL_H
 
 #include "pymem.h"
+#include "ungil.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -142,7 +143,8 @@ _PyObject_INIT(PyObject *op, PyTypeObject *typeobj)
         Py_INCREF(typeobj);
     }
     _Py_NewReference(op);
-	Py_OWNER(op) = 4; //Get from tls
+
+	Py_OWNER(op) = tls_thread_id; // ungil: Get something more unique from tls
     return op;
 }
 

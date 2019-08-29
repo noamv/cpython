@@ -838,6 +838,10 @@ PyAPI_FUNC(int) PyObject_IsInstance(PyObject *object, PyObject *typeorclass);
 /* issubclass(object, typeorclass) */
 PyAPI_FUNC(int) PyObject_IsSubclass(PyObject *object, PyObject *typeorclass);
 
+/* ungill: should implemnt this for all python objcets:
+PyAPI_FUNC(int) PyObject_GetOwner(PyObject* object);
+*/
+
 #ifndef Py_LIMITED_API
 #  define Py_CPYTHON_ABSTRACTOBJECT_H
 #  include  "cpython/abstract.h"

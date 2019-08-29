@@ -313,6 +313,13 @@ builtin_abs(PyObject *module, PyObject *x)
     return PyNumber_Absolute(x);
 }
 
+static PyObject*
+builtin_get_owner(PyObject* module, PyObject* x)
+/*[clinic end generated code: output=b1b433b9e51356f5 input=bed4ca14e29c20d1]*/
+{
+	return PyLong_FromSsize_t(Py_OWNER(x));
+}
+
 /*[clinic input]
 all as builtin_all
 
@@ -2516,7 +2523,6 @@ builtin_issubclass_impl(PyObject *module, PyObject *cls,
     return PyBool_FromLong(retval);
 }
 
-
 typedef struct {
     PyObject_HEAD
     Py_ssize_t          tuplesize;
@@ -2712,6 +2718,7 @@ static PyMethodDef builtin_methods[] = {
      METH_FASTCALL | METH_KEYWORDS, build_class_doc},
     {"__import__",      (PyCFunction)(void(*)(void))builtin___import__, METH_VARARGS | METH_KEYWORDS, import_doc},
     BUILTIN_ABS_METHODDEF
+	BUILTIN_GET_OWNER_METHODDEF
     BUILTIN_ALL_METHODDEF
     BUILTIN_ANY_METHODDEF
     BUILTIN_ASCII_METHODDEF

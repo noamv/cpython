@@ -237,6 +237,7 @@
     <ClInclude Include="..\Include\tracemalloc.h" />
     <ClInclude Include="..\Include\tupleobject.h" />
     <ClInclude Include="..\Include\ucnhash.h" />
+    <ClInclude Include="..\Include\ungil.h" />
     <ClInclude Include="..\Include\unicodeobject.h" />
     <ClInclude Include="..\Include\weakrefobject.h" />
     <ClInclude Include="..\Modules\_math.h" />
@@ -412,6 +413,7 @@
     <ClCompile Include="..\PC\getpathp.c" />
     <ClCompile Include="..\PC\msvcrtmodule.c" />
     <ClCompile Include="..\Python\pyhash.c" />
+    <ClCompile Include="..\Python\ungil.c" />
     <ClCompile Include="..\Python\_warnings.c" />
     <ClCompile Include="..\Python\asdl.c" />
     <ClCompile Include="..\Python\ast.c" />
@@ -519,7 +521,6 @@
   <Target Name="_WarnAboutZlib" BeforeTargets="PrepareForBuild" Condition="!$(IncludeExternals)">
     <Warning Text="Not including zlib is not a supported configuration." />
   </Target>
-
   <PropertyGroup>
     <VCRedistDir>$(VCInstallDir)\Redist\MSVC\$(VCToolsRedistVersion)\</VCRedistDir>
     <VCRedistDir Condition="$(Platform) == 'Win32'">$(VCRedistDir)x86\</VCRedistDir>
