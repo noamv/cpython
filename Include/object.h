@@ -98,6 +98,8 @@ whose size is determined when the object is allocated.
 #define PyObject_VAR_HEAD      PyVarObject ob_base;
 #define Py_INVALID_SIZE (Py_ssize_t)-1
 
+#include <windows.h>
+
 /* Nothing is actually declared to be a PyObject, but every pointer to
  * a Python object can be cast to a PyObject*.  This is inheritance built
  * by hand.  Similarly every pointer to a variable-size Python object can,
@@ -109,6 +111,7 @@ typedef struct _object {
     struct _typeobject *ob_type;
 	_Py_atomic_int ob_owner;
 	char ob_in_use; // ungil: chage type
+	volatile LPCRITICAL_SECTION ob_lock;
 } PyObject;
 
 /* Cast argument to PyObject* type. */

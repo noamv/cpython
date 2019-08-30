@@ -838,6 +838,10 @@ PyAPI_FUNC(int) PyObject_IsInstance(PyObject *object, PyObject *typeorclass);
 /* issubclass(object, typeorclass) */
 PyAPI_FUNC(int) PyObject_IsSubclass(PyObject *object, PyObject *typeorclass);
 
+PyAPI_FUNC(void) PyObject_StartSync(PyObject* object);
+PyAPI_FUNC(void) PyObject_EndSync(PyObject* object);
+
+
 /* ungill: should implemnt this for all python objcets:
 PyAPI_FUNC(int) PyObject_GetOwner(PyObject* object);
 */

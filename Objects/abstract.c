@@ -2548,6 +2548,35 @@ PyObject_IsSubclass(PyObject *derived, PyObject *cls)
     return recursive_issubclass(derived, cls);
 }
 
+#include "ungil.h"
+#include "pycore_atomic.h"
+
+void
+PyObject_StartSync(PyObject* ob)
+{
+	if (tls_thread_id == _Py_atomic_load(&Py_OWNER(ob)))
+	{
+		ob->ob_in_use = 1;
+		if (tls_thread_id == _Py_atomic_load(&Py_OWNER(ob)))
+			return;
+		// ob->ob_in_use = 0; ??
+	}
+
+	if (_Py_atomic_load(&Py_OWNER(ob)) != 0)
+	{
+		_Py_atomic_store(&Py_OWNER(ob), 0);
+
+		LPCRITICAL_SECTION lock = malloc(sizeof(CRITICAL_SECTION));
+
+		if (InterlockedCompareExchange((LONG*)&ob->ob_lock, lock, NULL) != NULL)
+		{
+			free(lock);
+		}
+	}
+	// lock
+	EnterCriticalSection(&ob->ob_lock);
+}
+
 int
 _PyObject_RealIsInstance(PyObject *inst, PyObject *cls)
 {
