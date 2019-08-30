@@ -2580,7 +2580,7 @@ PyObject_StartSync(PyObject* ob)
 	while (!ob->ob_lock)
 		Sleep(0); // wait for critical section allocation
 
-	EnterCriticalSection(ob->ob_lock);
+	EnterCriticalSection((void*)ob->ob_lock);
 }
 
 void
@@ -2591,7 +2591,7 @@ PyObject_EndSync(PyObject* ob)
 		return;
 	}
 
-	LeaveCriticalSection(ob->ob_lock);
+	LeaveCriticalSection((void*)ob->ob_lock);
 }
 
 int
