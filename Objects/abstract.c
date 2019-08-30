@@ -2554,27 +2554,44 @@ PyObject_IsSubclass(PyObject *derived, PyObject *cls)
 void
 PyObject_StartSync(PyObject* ob)
 {
-	if (tls_thread_id == _Py_atomic_load(&Py_OWNER(ob)))
+	if (tls_thread_id == Py_OWNER(ob)._value)
 	{
 		ob->ob_in_use = 1;
-		if (tls_thread_id == _Py_atomic_load(&Py_OWNER(ob)))
+		if (tls_thread_id == Py_OWNER(ob)._value)
 			return;
-		// ob->ob_in_use = 0; ??
+		ob->ob_in_use = 0;
 	}
 
 	if (_Py_atomic_load(&Py_OWNER(ob)) != 0)
 	{
 		_Py_atomic_store(&Py_OWNER(ob), 0);
 
+		while (ob->ob_in_use)
+			Sleep(0); // wait for owner finish operation
+
 		LPCRITICAL_SECTION lock = malloc(sizeof(CRITICAL_SECTION));
 
-		if (InterlockedCompareExchange((LONG*)&ob->ob_lock, lock, NULL) != NULL)
+		if (InterlockedCompareExchange((volatile LONG*)&ob->ob_lock, (LONG)lock, (LONG)NULL) != (LONG)NULL)
 		{
 			free(lock);
 		}
 	}
-	// lock
-	EnterCriticalSection(&ob->ob_lock);
+
+	while (!ob->ob_lock)
+		Sleep(0); // wait for critical section allocation
+
+	EnterCriticalSection(ob->ob_lock);
+}
+
+void
+PyObject_EndSync(PyObject* ob)
+{
+	if (ob->ob_in_use) {
+		ob->ob_in_use = 0;
+		return;
+	}
+
+	LeaveCriticalSection(ob->ob_lock);
 }
 
 int

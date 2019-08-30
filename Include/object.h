@@ -98,6 +98,7 @@ whose size is determined when the object is allocated.
 #define PyObject_VAR_HEAD      PyVarObject ob_base;
 #define Py_INVALID_SIZE (Py_ssize_t)-1
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
 /* Nothing is actually declared to be a PyObject, but every pointer to
@@ -450,6 +451,7 @@ static inline void _Py_NewReference(PyObject *op)
     _Py_INC_REFTOTAL;
     Py_REFCNT(op) = 1;
 	Py_OWNER(op)._value = tls_thread_id;
+    op->ob_lock = NULL;
 }
 
 static inline void _Py_ForgetReference(PyObject *op)
