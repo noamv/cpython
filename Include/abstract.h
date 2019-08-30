@@ -838,8 +838,8 @@ PyAPI_FUNC(int) PyObject_IsInstance(PyObject *object, PyObject *typeorclass);
 /* issubclass(object, typeorclass) */
 PyAPI_FUNC(int) PyObject_IsSubclass(PyObject *object, PyObject *typeorclass);
 
-PyAPI_FUNC(void) PyObject_StartSync(PyObject* object);
-PyAPI_FUNC(void) PyObject_EndSync(PyObject* object);
+PyAPI_FUNC(void) PyObject_StartSync(void* object);
+PyAPI_FUNC(void) PyObject_EndSync(void* object);
 
 
 /* ungill: should implemnt this for all python objcets:

@@ -127,7 +127,10 @@ typedef struct {
 #define Py_REFCNT(ob)           (_PyObject_CAST(ob)->ob_refcnt)
 #define Py_TYPE(ob)             (_PyObject_CAST(ob)->ob_type)
 #define Py_OWNER(ob)             (_PyObject_CAST(ob)->ob_owner)
+#define Py_LOCK(ob)             (_PyObject_CAST(ob)->ob_lock)
+#define Py_INUSE(ob)             (_PyObject_CAST(ob)->ob_in_use)
 #define Py_SIZE(ob)             (_PyVarObject_CAST(ob)->ob_size)
+
 
 /*
 Type objects contain a string containing the type name (to help somewhat

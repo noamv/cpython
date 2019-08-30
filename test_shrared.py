@@ -5,6 +5,11 @@ from time import sleep
 def logic(l, x, y):
     my_list = []
     print('owner of mylist is ' + str(get_owner(my_list)))
+
+    print('owner of list that shared from main:', get_owner(l))
+    print('inserting to list that shared from main...')
+    l.insert(0, 1)
+    print('owner of list that shared from main:', get_owner(l))
     """
     for i in range(x, y):
         sleep(0.01)
@@ -15,7 +20,7 @@ def logic(l, x, y):
 def main():
     my_list = []
     print('start')
-    import pdb; pdb.set_trace()
+    print('owner of list from main:', get_owner(my_list))
     th1 = Thread(target=logic, args=(my_list, 100, 200))
     th1.start()
     th2 = Thread(target=logic, args=(my_list, 100, 200))

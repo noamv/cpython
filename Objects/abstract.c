@@ -2552,35 +2552,35 @@ PyObject_IsSubclass(PyObject *derived, PyObject *cls)
 #include "pycore_atomic.h"
 
 void
-PyObject_StartSync(PyObject* ob)
+PyObject_StartSync(void* ob)
 {
 	if (tls_thread_id == Py_OWNER(ob)._value)
 	{
-		ob->ob_in_use = 1;
+		Py_INUSE(ob) = 1;
 		if (tls_thread_id == Py_OWNER(ob)._value)
 			return;
-		ob->ob_in_use = 0;
+		Py_INUSE(ob) = 0;
 	}
 
 	if (_Py_atomic_load(&Py_OWNER(ob)) != 0)
 	{
 		_Py_atomic_store(&Py_OWNER(ob), 0);
 
-		while (ob->ob_in_use)
+		while (Py_INUSE(ob))
 			Sleep(0); // wait for owner finish operation
 
 		LPCRITICAL_SECTION lock = malloc(sizeof(CRITICAL_SECTION));
 
-		if (InterlockedCompareExchange((volatile LONG*)&ob->ob_lock, (LONG)lock, (LONG)NULL) != (LONG)NULL)
+		if (InterlockedCompareExchange((volatile LONG*)&Py_LOCK(ob), (LONG)lock, (LONG)NULL) != (LONG)NULL)
 		{
 			free(lock);
 		}
 	}
 
-	while (!ob->ob_lock)
+	while (!Py_LOCK(ob))
 		Sleep(0); // wait for critical section allocation
 
-	EnterCriticalSection((void*)ob->ob_lock);
+	EnterCriticalSection((void*)Py_LOCK(ob));
 }
 
 void

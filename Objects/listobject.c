@@ -215,15 +215,23 @@ list_new_prealloc(Py_ssize_t size)
     return (PyObject *) op;
 }
 
+#define PyObject_EndSync_Return(ob, type, val) \
+do { \
+	type _ret = val; \
+	PyObject_EndSync(ob); \
+	return _ret; \
+} while(0)
+
 Py_ssize_t
 PyList_Size(PyObject *op)
 {
-    if (!PyList_Check(op)) {
-        PyErr_BadInternalCall();
-        return -1;
-    }
-    else
-        return Py_SIZE(op);
+	PyObject_StartSync(op);
+	if (!PyList_Check(op)) {
+		PyErr_BadInternalCall();
+		PyObject_EndSync_Return(op, Py_ssize_t, -1);
+	}
+	else
+		PyObject_EndSync_Return(op, Py_ssize_t, Py_SIZE(op));
 }
 
 static inline int
@@ -809,8 +817,12 @@ static PyObject *
 list_insert_impl(PyListObject *self, Py_ssize_t index, PyObject *object)
 /*[clinic end generated code: output=7f35e32f60c8cb78 input=858514cf894c7eab]*/
 {
-    if (ins1(self, index, object) == 0)
-        Py_RETURN_NONE;
+	PyObject_StartSync(self);
+	if (ins1(self, index, object) == 0) {
+		PyObject_EndSync(self);
+		Py_RETURN_NONE;
+	}
+	PyObject_EndSync(self);
     return NULL;
 }
 
