@@ -1,3 +1,4 @@
 #include "ungil.h"
-volatile unsigned int GlOBAL_THREAD_COUNTER = 0;
-__declspec(thread) unsigned int tls_thread_id = 0;
+
+volatile int GlOBAL_THREAD_COUNTER = 1;
+Py_THREAD_LOCAL int tls_thread_id = 0;

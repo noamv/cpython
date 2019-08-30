@@ -847,4 +847,11 @@ extern _invalid_parameter_handler _Py_silent_invalid_parameter_handler;
 #  define _Py_NO_RETURN
 #endif
 
+#if defined(_MSC_VER)
+#  define Py_THREAD_LOCAL __declspec(thread)
+#else
+#  include <threads.h>
+#  define Py_THREAD_LOCAL thread_local
+#endif
+
 #endif /* Py_PYPORT_H */

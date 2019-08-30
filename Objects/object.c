@@ -1857,6 +1857,7 @@ _Py_NewReference(PyObject *op)
     op->ob_refcnt = 1;
     _Py_AddToAllObjects(op, 1);
     _Py_INC_TPALLOCS(op);
+    Py_OWNER(op)._value = tls_thread_id;
 }
 
 void

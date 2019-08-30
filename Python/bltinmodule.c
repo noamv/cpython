@@ -317,7 +317,7 @@ static PyObject*
 builtin_get_owner(PyObject* module, PyObject* x)
 /*[clinic end generated code: output=b1b433b9e51356f5 input=bed4ca14e29c20d1]*/
 {
-	return PyLong_FromSsize_t(Py_OWNER(x));
+	return PyLong_FromSsize_t(_Py_atomic_load(&Py_OWNER(x)));
 }
 
 /*[clinic input]
@@ -2522,6 +2522,7 @@ builtin_issubclass_impl(PyObject *module, PyObject *cls,
         return NULL;
     return PyBool_FromLong(retval);
 }
+
 
 typedef struct {
     PyObject_HEAD

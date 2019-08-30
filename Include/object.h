@@ -2,6 +2,8 @@
 #define Py_OBJECT_H
 
 #include "pymem.h"   /* _Py_tracemalloc_config */
+#include "pycore_atomic.h"
+#include "ungil.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -105,8 +107,7 @@ typedef struct _object {
     _PyObject_HEAD_EXTRA
     Py_ssize_t ob_refcnt;
     struct _typeobject *ob_type;
-	// _Py_atomic_int ob_owner; ungill: the include of pycore_atomic for _Py_atomic_int breaks include order
-	unsigned int ob_owner;
+	_Py_atomic_int ob_owner;
 	char ob_in_use; // ungil: chage type
 } PyObject;
 
@@ -125,7 +126,6 @@ typedef struct {
 #define Py_TYPE(ob)             (_PyObject_CAST(ob)->ob_type)
 #define Py_OWNER(ob)             (_PyObject_CAST(ob)->ob_owner)
 #define Py_SIZE(ob)             (_PyVarObject_CAST(ob)->ob_size)
-
 
 /*
 Type objects contain a string containing the type name (to help somewhat
@@ -446,6 +446,7 @@ static inline void _Py_NewReference(PyObject *op)
     _Py_INC_TPALLOCS(op);
     _Py_INC_REFTOTAL;
     Py_REFCNT(op) = 1;
+	Py_OWNER(op)._value = tls_thread_id;
 }
 
 static inline void _Py_ForgetReference(PyObject *op)
