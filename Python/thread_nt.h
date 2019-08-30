@@ -167,7 +167,6 @@ typedef struct {
     void *arg;
 } callobj;
 
-
 /* thunker to call adapt between the function type used by the system's
 thread start function and the internally used one. */
 static unsigned __stdcall
